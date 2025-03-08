@@ -1,5 +1,7 @@
 # FaceLink
 
+This is one of my first open-source releases. Please add a ⭐ if you like the idea of this project or if you like to use it.
+
 FaceLink is a powerful face recognition system designed with a modular approach, separating its functionality into three distinct components: **Analyzer, Controller, and Frontend**. This architecture makes it highly scalable, allowing resource-intensive backend processing while enabling lightweight frontend devices like Raspberry Pi to handle face capture and transmission.
 
 ## Features
