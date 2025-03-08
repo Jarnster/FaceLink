@@ -55,7 +55,7 @@ class Database
 
     public function getAnalyzerTasks(bool $markAsInProgress = true)
     {
-        $maxClockAnalyzerTasks = 5; // Max amount of analyzer tasks to give to the analyzer, for each analyzer check tick
+        $maxClockAnalyzerTasks = get_config_value("MAX_THREAD_ANALYZER_TASKS") or 5; // Max amount of analyzer tasks to give to the analyzer at a time, for each analyzer check tick
         if ($markAsInProgress == false) {
             $maxClockAnalyzerTasks = 9999; // When markAsInProgress is false, this means it will be for monitoring, so don't set a limit to make it possible to view all
         }
