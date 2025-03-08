@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceLink - Camera Capture</title>
+    <style>
+        video {
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid black;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas" style="display:none;"></canvas>
+        <button id="startButton">Start Camera</button>
+        <!-- <button id="loopButton">Loop Camera</button> -->
+        <button id="captureButton" style="display:none;">Capture & Upload</button>
+    </div>
+
+    <script>
+        const API_HOST = "http://10.10.1.38";
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const startButton = document.getElementById("startButton");
+        const captureButton = document.getElementById("captureButton");
+        // const loopButton = document.getElementById("loopButton");
+
+        startButton.addEventListener("click", async () => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            startButton.style.display = "none";
+            captureButton.style.display = "block";
+        });
+
+        captureButton.addEventListener("click", () => {
+            const context = canvas.getContext("2d");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = canvas.toDataURL("image/png");
+            uploadImage(imageData, false);
+        });
+
+        // loopButton.addEventListener("click", () => {
+        //     setInterval(function () {
+        //         const context = canvas.getContext("2d");
+        //         canvas.width = video.videoWidth;
+        //         canvas.height = video.videoHeight;
+        //         context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        //         const imageData = canvas.toDataURL("image/png");
+        //         uploadImage(imageData, true);
+        //     }, 1)
+        // })
+
+        async function uploadImage(imageData, disableAlert) {
+            try {
+                const CONTROLLER_API_URL_WITH_ENDPOINT = API_HOST + "/api/client_upload.php";
+                const response = await fetch(CONTROLLER_API_URL_WITH_ENDPOINT, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ image: imageData })
+                });
+                const result = await response.json();
+                if (!disableAlert) {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error("Upload failed", error);
+            }
+        }
+    </script>
+</body>
+
+</html>
